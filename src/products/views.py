@@ -1,15 +1,15 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from connection import connect as conn 
+from connection import db_connect  
 # Create your views here.
 def getAllProducts(res):
-    con = conn.connect()
-    cursor = con.cursor()
+    conn = db_connect.connect()
+    cursor = conn.cursor()
     cursor.execute('SELECT * FROM IS_PRODUCT')
     rows = cursor.fetchall()
      # close the cursor and connection
     cursor.close()
-    con.close()
+    conn.close()
     print(rows)
     # create a response dictionary containing the rows
     response_data = {
