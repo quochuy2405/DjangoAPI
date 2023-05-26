@@ -198,7 +198,7 @@ INSERT INTO wallet (
     balance
 ) VALUES (
     1,
-    1000.00
+    1000000.00
 );
 
 INSERT INTO wallet (
@@ -251,7 +251,7 @@ INSERT INTO products (
     'Áo sơ mi nam màu trắng, kiểu dáng thời trang',
     'Nam',
     'Chất liệu cotton, thoáng mát',
-    'image1.jpg',
+    'ao_so_mi',
     29.99,
     50,
     'S,M,L,XL'
@@ -275,7 +275,7 @@ INSERT INTO products (
     'Áo thun nam màu đen, phong cách trẻ trung',
     'Nam',
     'Chất liệu cotton, dễ dàng phối đồ',
-    'image2.jpg',
+    'ao_thun',
     19.99,
     100,
     'S,M,L,XL'
@@ -299,7 +299,7 @@ INSERT INTO products (
     'Đầm công sở màu xanh navy, phù hợp với công việc',
     'Nữ',
     'Chất liệu polyester, không nhăn',
-    'image3.jpg',
+    'dam',
     39.99,
     30,
     'S,M,L'
@@ -323,7 +323,7 @@ INSERT INTO products (
     'Áo khoác nữ dày màu đen, ấm áp',
     'Nữ',
     'Chất liệu dù, lót lông cừu',
-    'image4.jpg',
+    'ao_khoac',
     49.99,
     20,
     'S,M,L,XL'
@@ -347,7 +347,7 @@ INSERT INTO products (
     'Giày thể thao nam màu trắng, êm ái',
     'Nam',
     'Đế cao su chống trơn trượt',
-    'image5.jpg',
+    'giay',
     59.99,
     10,
     '40,41,42,43'
