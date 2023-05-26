@@ -127,10 +127,10 @@ BEGIN
 EXCEPTION
     WHEN no_data_found THEN
 -- Ném ra một lỗi nếu người dùng không có ví
-        raise_application_error(-20002, 'Người dùng không có ví.');
+        raise_application_error(-20001, 'Người dùng không có ví.');
     WHEN OTHERS THEN
 -- Ném ra một lỗi khác nếu có lỗi không xác định
-        raise_application_error(-20003, 'Đã xảy ra lỗi khi trừ tiền từ ví.');
+        raise_application_error(-20001, 'Đã xảy ra lỗi khi trừ tiền từ ví.');
 END;
 /
 
