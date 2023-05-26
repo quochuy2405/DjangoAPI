@@ -1,8 +1,5 @@
-from django.urls import path
-from orders import controllers as od
-from .views import getData 
 
+from django.urls import path,include
 urlpatterns = [
-    path('order/checkout', od.place_order, name='place_order'),
-    path('test', getData, name='test'),
+      path('products/', include('products.urls')),
 ]
