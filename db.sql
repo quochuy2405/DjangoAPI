@@ -1,98 +1,54 @@
-CREATE TABLE `Discount` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `Name` varchar(150) NOT NULL,
-    `Value` int NOT NULL DEFAULT 0,
-    `Quantity` int NOT NULL DEFAULT 0,
-    PRIMARY KEY (`Id`)
+CREATE TABLE products (
+    id VARCHAR2(50) PRIMARY KEY,
+    name VARCHAR2(255),
+    category_code VARCHAR2(255),
+    descriptions VARCHAR2(255),
+    details VARCHAR2(255),
+    gender VARCHAR2(50),
+    highlights VARCHAR2(255),
+    imageName VARCHAR2(255),
+    price NUMBER(10, 2),
+    quantity NUMBER,
+    size VARCHAR2(255),
+    CONSTRAINT fk_category_id FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
-CREATE TABLE `ProductType` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `Name` varchar(150) NOT NULL,
-    `Description` text NULL,
-    PRIMARY KEY (`Id`)
+CREATE TABLE orders (
+    id NUMBER PRIMARY KEY,
+    addressNumber VARCHAR2(255),
+    ward VARCHAR2(255),
+    district VARCHAR2(255),
+    province VARCHAR2(255),
+    checkoutId VARCHAR2(255),
+    email VARCHAR2(255),
+    name VARCHAR2(255),
+    user_id NUMBER,
+    CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-CREATE TABLE `Account` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `Username` varchar(100) NOT NULL,
-    `Password` varchar(100) NOT NULL,
-    `RoleId` int NOT NULL,
-    PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_Account_Role_RoleId` FOREIGN KEY (`RoleId`) REFERENCES `Role` (`Id`) ON DELETE CASCADE
+CREATE TABLE product_order (
+    product_id VARCHAR2(50),
+    order_id NUMBER,
+    CONSTRAINT fk_product_id FOREIGN KEY (product_id) REFERENCES products(id),
+    CONSTRAINT fk_order_id FOREIGN KEY (order_id) REFERENCES orders(id),
+    PRIMARY KEY (product_id, order_id)
 );
 
-CREATE TABLE `Role` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `RoleName` varchar(100) NOT NULL,
-    `Description` text NULL,
-    PRIMARY KEY (`Id`)
-);
-CREATE TABLE `Product` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `Name` varchar(150) NOT NULL,
-    `Description` text NULL,
-    `Price` int NOT NULL DEFAULT 0,
-    `CreatedDate` date NOT NULL,
-    `Photo` text NULL,
-    `Size` int NOT NULL DEFAULT 0,
-    `ProductTypeId` int NOT NULL,
-    `SupplierId` int NOT NULL,
-    PRIMARY KEY (`Id`),
+CREATE TABLE categories (
+    id VARCHAR2(255) PRIMARY KEY,
+    name VARCHAR2(255)
 );
 
-CREATE TABLE `Employee` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `Name` varchar(150) NOT NULL,
-    `Age` int NOT NULL,
-    `Gender` bit NOT NULL,
-    `Email` varchar(100) NOT NULL,
-    `Phone` varchar(11) NOT NULL,
-    `Address` varchar(500) NOT NULL,
-    `City` varchar(100) NOT NULL,
-    `Country` varchar(100) NOT NULL,
-    `Salary` bigint NOT NULL DEFAULT 0,
-    `Status` varchar(100) NULL DEFAULT 'Hoạt động',
-    `StoreId` int NOT NULL,
-    PRIMARY KEY (`Id`),
+CREATE TABLE users (
+    id NUMBER PRIMARY KEY,
+    username VARCHAR2(255) NOT NULL,
+    email VARCHAR2(255) NOT NULL,
+    password VARCHAR2(255) NOT NULL
 );
 
-CREATE TABLE `ShoppingCart_Product` (
-    `ShoppingCartId` int NOT NULL,
-    `ProductId` int NOT NULL,
-    PRIMARY KEY (`ShoppingCartId`, `ProductId`),
-    CONSTRAINT `FK_ShoppingCart_Product_Product_ProductId` FOREIGN KEY (`ProductId`) REFERENCES `Product` (`Id`) ON DELETE CASCADE,
-    CONSTRAINT `FK_ShoppingCart_Product_ShoppingCart_ShoppingCartId` FOREIGN KEY (`ShoppingCartId`) REFERENCES `ShoppingCart` (`Id`) ON DELETE CASCADE
-);
-
-CREATE TABLE `ShoppingCart` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `UserId` int NOT NULL,
-    PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_ShoppingCart_User_UserId` FOREIGN KEY (`UserId`) REFERENCES `User` (`Id`) ON DELETE CASCADE
-);
-
-CREATE TABLE `Bill` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `UserId` int NOT NULL,
-    `Validated` int NOT NULL DEFAULT 0,
-    `Status` varchar(100) NULL DEFAULT 'Đang chờ thanh toán',
-    `TotalPrice` bigint NOT NULL,
-    PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_Bill_User_UserId` FOREIGN KEY (`UserId`) REFERENCES `User` (`Id`) ON DELETE CASCADE
-);
-CREATE TABLE `User` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `Username` varchar(100) NOT NULL,
-    `Password` varchar(100) NOT NULL,
-    `Email` varchar(100) NOT NULL,
-    `Phone` varchar(11) NOT NULL,
-    `Name` varchar(100) NOT NULL,
-    `Avata` varchar(255) NULL,
-    `Address` text NULL,
-    `City` varchar(100) NULL,
-    `Country` varchar(100) NULL,
-    `Gender` bit NOT NULL,
-    `Balance` number NULL,
-    PRIMARY KEY (`Id`)
+CREATE TABLE wallet (
+    id NUMBER PRIMARY KEY,
+    user_id NUMBER NOT NULL,
+    balance NUMBER(10, 2) NOT NULL,
+    CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(id)
 );
