@@ -20,7 +20,7 @@ def getall(res):
     data = [dict(zip(columns, row)) for row in rows]
     cursor.close()
     connection.close()
-    print(rows)
+   
     # create a response dictionary containing the rows
     response_data = {
         'rows': data,

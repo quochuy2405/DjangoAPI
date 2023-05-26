@@ -21,8 +21,7 @@ def createOrders(request):
         payment_methods = data['payment_methods']
         status = data['status']
         products = data['products']
-        print(checkout_id)
-
+ 
         with transaction.atomic():
             # Lock the product to avoid conflicts
             cursor = connection.cursor()
@@ -101,7 +100,7 @@ def checkQuantity(request):
     try:
         data = request.data
         products = data['products']
-        print(products)
+       
 
         with transaction.atomic():
             # Lock the product to avoid conflicts
