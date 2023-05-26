@@ -40,7 +40,11 @@ INSTALLED_APPS = [
 
     # 
     'rest_framework',
-    'base',
+    'orders',
+    'api',
+    'categories',
+    'wallet',
+    'users',
     'products',
 
 ]
@@ -75,7 +79,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app.wsgi.application'
 
-
+APPEND_SLASH = False
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 

@@ -1,5 +1,8 @@
 from django.urls import path
-from products import controllers as pr
+from orders import controllers as od
+from .views import getData 
+
 urlpatterns = [
-    path('get/', pr.getAllProducts),
+    path('order/checkout', od.place_order, name='place_order'),
+    path('test', getData, name='test'),
 ]

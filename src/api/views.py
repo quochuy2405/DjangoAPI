@@ -5,4 +5,4 @@ from rest_framework.decorators import api_view
 
 def getData(request):
   
-    return Response({})
+    return Response({huy:'huy'})
