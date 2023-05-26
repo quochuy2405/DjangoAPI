@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 
 
 @api_view(['POST'])
-def place_order(request):
+def checkoutOrder(request):
     try:
         data = request.data
         address_number = data['address_number']
@@ -28,7 +28,7 @@ def place_order(request):
                 columns = [desc[0] for desc in cursor.description]
                 data = [dict(zip(columns, row))]
                 if data[0]['QUANTITY']< 1:  # Assuming the quantity column is at index 2
-                    raise Exception('Sản phẩm đã hết hàng.')
+                    raise Exception(f"Sản phẩm {data[0]['name']} đã hết hàng.")
                 # Deduct money from wallet using the procedure DeductMoneyFromWallet
     
             cursor.callproc('DeductMoneyFromWallet', [user_id, total])
@@ -52,6 +52,43 @@ def place_order(request):
         
 
         message = {"message": "Đặt hàng thành công","status":'success'}
+        return Response(message)
+
+    except IntegrityError:
+        error_message = {"message": "Đã có lỗi xảy ra trong quá trình xử lý đặt hàng.","status":'failed'}
+        transaction.rollback()
+        return Response(error_message)
+
+    except Exception as e:
+        print(e.args[0])
+        error_message = str(e)  # Convert the DatabaseError object to a string
+        lines = error_message.split('\n')  # Split the error message by newline character
+        first_line = lines[0].replace('ORA-20001:','')  # Get the first line
+
+        error_message = {"message": f"Lỗi khi đặt hàng: {first_line}", "status": 'failed'}
+        transaction.rollback()
+        return Response(error_message)
+
+
+@api_view(['POST'])
+def checkQuantity(request):
+    try:
+        data = request.data
+        products = data['products']
+
+        with transaction.atomic():
+            # Lock the product to avoid conflicts
+            cursor = connection.cursor()
+            for product in products:
+                cursor.execute(f"SELECT * FROM PRODUCTS WHERE ID ={product['id']}")
+                row = cursor.fetchone()
+                columns = [desc[0] for desc in cursor.description]
+                data = [dict(zip(columns, row))]
+                if data[0]['QUANTITY']< 1:  # Assuming the quantity column is at index 2
+                    raise Exception(f"Sản phẩm {data[0]['name']} đã hết hàng.")
+                cursor.callproc('CHECK_PRODUCT_QUANTITY_PROCEDURE', [product['id'], product['quantity']])
+
+        message = {"message": "Đủ sản phẩm cho hóa đơn này","status":'success'}
         return Response(message)
 
     except IntegrityError:
