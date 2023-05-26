@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 
 
 @api_view(['POST'])
-def checkoutOrder(request):
+def createOrders(request):
     try:
         data = request.data
         address_number = data['address_number']
@@ -14,10 +14,14 @@ def checkoutOrder(request):
         province = data['province']
         checkout_id = data['checkout_id']
         email = data['email']
+        phone = data['phone']
         name = data['name']
         user_id = data['user_id']
         total = data['total']
+        payment_methods = data['payment_methods']
+        status = data['status']
         products = data['products']
+        print(checkout_id)
 
         with transaction.atomic():
             # Lock the product to avoid conflicts
@@ -36,8 +40,30 @@ def checkoutOrder(request):
             for product in products:
                 ord_id = cursor.var(int)
                 cursor.execute(f"""
-                    INSERT INTO orders (addressNumber, ward, district, province, checkoutId, email, name, user_id)
-                    VALUES ('{address_number}', '{ward}', '{district}', '{province}', '{checkout_id}', '{email}', '{name}', {int(user_id)})
+                    INSERT INTO orders (
+                    addressnumber,
+                    ward,
+                    district,
+                    province,
+                    checkoutid,
+                    email,
+                    phone,
+                    payment_methods,
+                    status,
+                    name,
+                    user_id)
+                    VALUES (
+                    '{address_number}',
+                    '{ward}', 
+                    '{district}',
+                    '{province}', 
+                    '{checkout_id}',
+                    '{email}',
+                    '{phone}',
+                    '{payment_methods}',
+                    '{status}',
+                    '{name}',
+                    {int(user_id)})
                 """)
                 cursor.execute("SELECT MAX(id) FROM orders")
                 row = cursor.fetchone()
@@ -45,7 +71,7 @@ def checkoutOrder(request):
                
                 cursor.execute(f"""
                     INSERT INTO product_order (product_id, order_id, quantity)
-                    VALUES ({product['id']}, {order_id}, {product['quantity']})
+                    VALUES ({product['id']}, {order_id}, {product['quantityOrder']})
                 """)
             
             cursor.close()
@@ -57,7 +83,7 @@ def checkoutOrder(request):
     except IntegrityError:
         error_message = {"message": "Đã có lỗi xảy ra trong quá trình xử lý đặt hàng.","status":'failed'}
         transaction.rollback()
-        return Response(error_message)
+        return Response(error_message,status=400)
 
     except Exception as e:
         print(e.args[0])
@@ -67,7 +93,7 @@ def checkoutOrder(request):
 
         error_message = {"message": f"Lỗi khi đặt hàng: {first_line}", "status": 'failed'}
         transaction.rollback()
-        return Response(error_message)
+        return Response(error_message,status=400)
 
 
 @api_view(['POST'])
@@ -75,18 +101,19 @@ def checkQuantity(request):
     try:
         data = request.data
         products = data['products']
+        print(products)
 
         with transaction.atomic():
             # Lock the product to avoid conflicts
             cursor = connection.cursor()
             for product in products:
-                cursor.execute(f"SELECT * FROM PRODUCTS WHERE ID ={product['id']}")
+                cursor.execute(f"SELECT * FROM PRODUCTS WHERE ID ={int(product['id'])}")
                 row = cursor.fetchone()
                 columns = [desc[0] for desc in cursor.description]
                 data = [dict(zip(columns, row))]
                 if data[0]['QUANTITY']< 1:  # Assuming the quantity column is at index 2
                     raise Exception(f"Sản phẩm {data[0]['name']} đã hết hàng.")
-                cursor.callproc('CHECK_PRODUCT_QUANTITY_PROCEDURE', [product['id'], product['quantity']])
+                cursor.callproc('CHECK_PRODUCT_QUANTITY_PROCEDURE', [product['id'], int(product['quantityOrder'])])
 
         message = {"message": "Đủ sản phẩm cho hóa đơn này","status":'success'}
         return Response(message)
@@ -94,7 +121,7 @@ def checkQuantity(request):
     except IntegrityError:
         error_message = {"message": "Đã có lỗi xảy ra trong quá trình xử lý đặt hàng.","status":'failed'}
         transaction.rollback()
-        return Response(error_message)
+        return Response(error_message,status=400)
 
     except Exception as e:
         print(e.args[0])
@@ -104,6 +131,6 @@ def checkQuantity(request):
 
         error_message = {"message": f"Lỗi khi đặt hàng: {first_line}", "status": 'failed'}
         transaction.rollback()
-        return Response(error_message)
+        return Response(error_message,status=400)
 
 

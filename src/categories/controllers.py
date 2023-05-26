@@ -2,7 +2,11 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.db import connection
+from rest_framework.decorators import api_view
+
 # Create your views here.
+@api_view(['GET'])
+
 def getall(res):
     
     cursor = connection.cursor()
@@ -10,7 +14,7 @@ def getall(res):
     rows = cursor.fetchall()
     # close the cursor and connection
      # get the column names
-    columns = [desc[0] for desc in cursor.description]
+    columns = [desc[0].lower() for desc in cursor.description]
 
     # convert rows into a list of dictionaries
     data = [dict(zip(columns, row)) for row in rows]

@@ -1,7 +1,7 @@
 
-from .controllers import checkoutOrder ,checkQuantity
+from .controllers import createOrders ,checkQuantity
 from django.urls import path
 urlpatterns = [
-    path('checkout', checkoutOrder, name='checkoutOrder'),
+    path('checkout', createOrders, name='createOrders'),
     path('check_quantity', checkQuantity, name='checkQuantity'),
 ]
